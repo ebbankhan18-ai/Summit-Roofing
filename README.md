@@ -213,14 +213,22 @@ checkout/purchase events appear automatically from Whop's own pixel once payment
 Example (run from the project folder; header value = your INVOICE_ADMIN_SECRET):
 
 ```bash
+# Member path (customer has a membership - e.g. picked in the admin UI):
 curl -X POST http://localhost:3000/api/admin/final-invoice \
   -H "Content-Type: application/json" \
   -H "x-admin-secret: $INVOICE_ADMIN_SECRET" \
-  -d '{"memberId":"mber_xxx","amount":2450,"emailAddress":"customer@example.com",
-       "customerName":"Customer Name","autoCharge":true,"saveAsDraft":true}'
+  -d '{"memberId":"mber_xxx","amount":2450,"autoCharge":true,"saveAsDraft":true}'
+
+# Guest path (no membership yet - invoice by email instead):
+curl -X POST http://localhost:3000/api/admin/final-invoice \
+  -H "Content-Type: application/json" \
+  -H "x-admin-secret: $INVOICE_ADMIN_SECRET" \
+  -d '{"amount":2450,"emailAddress":"customer@example.com","customerName":"Customer Name","autoCharge":false}'
 ```
 
-- `memberId` — the paying member (find in Whop Dashboard → People, or from the payment webhook).
+- `memberId` — the paying member (pick them in the admin UI, or find in Whop Dashboard → People).
+  The Whop Invoices API accepts **either** `memberId` **or** `emailAddress`, never both: with a
+  `memberId` the email is ignored (member path); without one, a valid `emailAddress` is required (guest path).
 - `saveAsDraft: true` creates a reviewable draft; set `false` to finalize immediately.
 - `autoCharge: false` sends the manual-pay invoice instead of auto-charging.
 - Both modes verified locally against the real API (real draft invoices `inv_…` were created; drafts are uncharged and can be discarded in the Whop dashboard).
