@@ -56,9 +56,13 @@ export const Route = createFileRoute('/api/admin/final-invoice')({
           return Response.json({ error: 'Invalid JSON body.' }, { status: 400 })
         }
 
-        const memberId = typeof body.memberId === 'string' ? body.memberId : ''
-        if (!memberId.startsWith('mber_')) {
-          return Response.json({ error: 'memberId is required and must start with mber_.' }, { status: 400 })
+        // Whop's createInvoice API accepts EITHER member_id OR email_address,
+        // never both. Member path (customer with a membership): member_id only.
+        // Guest path (no membership yet): email_address (+ optional name).
+        const memberId = typeof body.memberId === 'string' ? body.memberId.trim() : ''
+        const useMemberPath = memberId.startsWith('mber_')
+        if (memberId && !useMemberPath) {
+          return Response.json({ error: 'memberId must start with mber_ (or be omitted to invoice by email).' }, { status: 400 })
         }
 
         const amount = typeof body.amount === 'number' ? body.amount : NaN
@@ -67,8 +71,11 @@ export const Route = createFileRoute('/api/admin/final-invoice')({
         }
 
         const emailAddress = typeof body.emailAddress === 'string' ? body.emailAddress.trim() : ''
-        if (!EMAIL_RE.test(emailAddress)) {
-          return Response.json({ error: 'A valid emailAddress is required.' }, { status: 400 })
+        if (!useMemberPath && !EMAIL_RE.test(emailAddress)) {
+          return Response.json(
+            { error: 'A valid emailAddress is required when invoicing without a member ID.' },
+            { status: 400 },
+          )
         }
 
         const customerName = typeof body.customerName === 'string' ? body.customerName.slice(0, 120) : undefined
@@ -95,13 +102,12 @@ export const Route = createFileRoute('/api/admin/final-invoice')({
             idempotencyKey: request.headers.get('x-idempotency-key') ?? undefined,
             body: {
               account_id: getAccountId(),
-              member_id: memberId,
+              // Exactly one of member_id / email_address (API constraint).
+              ...(useMemberPath ? { member_id: memberId } : { email_address: emailAddress, customer_name: customerName }),
               // Whop invoices collect either by charging the stored payment
               // method automatically, or by sending the customer a manual-pay
               // invoice link (both documented InvoiceCollectionMethods).
               collection_method: autoCharge ? 'charge_automatically' : 'send_invoice',
-              email_address: emailAddress,
-              customer_name: customerName,
               charge_buyer_fee: body.chargeBuyerFee === true,
               automatically_finalizes_at: autoCharge && !saveAsDraft ? dueDate : undefined,
               due_date: dueDate,
