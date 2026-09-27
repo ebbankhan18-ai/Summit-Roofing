@@ -50,6 +50,11 @@ function InspectionCheckout() {
       </ul>
 
       <div className="mt-8">
+        <p className="mb-4 rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-xs leading-5 text-stone-600">
+          Prefer Apple Pay or Google Pay?{' '}
+          <Link to="/checkout/express" className="font-semibold text-slate-900 underline focus-visible:outline-2 focus-visible:outline-amber-600">
+            Use express checkout →</Link>
+        </p>
         {accountId && planId ? (
           <PaymentFlow
             accountId={accountId}

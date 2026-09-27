@@ -9,8 +9,16 @@ export const Route = createRootRoute({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { name: 'theme-color', content: '#0f172a' },
+      { name: 'description', content: 'Dallas roof repair, replacement, and inspections. Flat-rate inspections, transparent quotes, and secure Whop checkout.' },
+      { property: 'og:title', content: 'Summit Shield Roofing — Dallas roof repair & replacement' },
+      { property: 'og:description', content: 'Photo-documented estimates, flat-rate $149 inspections, and secure Whop checkout. Serving Dallas–Fort Worth.' },
+      { property: 'og:type', content: 'website' },
     ],
-    links: [{ rel: 'stylesheet', href: appCss }],
+    links: [
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+    ],
   }),
   shellComponent: RootDocument,
 })
