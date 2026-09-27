@@ -1,5 +1,5 @@
 import { validateToken } from '@whop-apps/auth'
-import { whopApi } from '#/lib/server/whop'
+import { getAccountId, whopApi } from '#/lib/server/whop'
 
 /**
  * Dashboard-view authentication for Whop iframe pages.
@@ -17,7 +17,6 @@ export interface DashboardUser {
   isAdmin: boolean
 }
 
-const COMPANY_ID_RE = /^biz_[A-Za-z0-9]+$/
 
 export async function getDashboardUser(request: Request): Promise<DashboardUser | null> {
   try {
@@ -25,9 +24,10 @@ export async function getDashboardUser(request: Request): Promise<DashboardUser 
     const auth = await validateToken({ req: request, dontThrow: true, appId })
     if (!auth?.userId) return null
 
-    const url = new URL(request.url)
-    const companyId = url.pathname.match(/\/dashboard\/(biz_[A-Za-z0-9]+)/)?.[1] ?? ''
-    if (!COMPANY_ID_RE.test(companyId)) return null
+    // Two iframe views reach this code: /dashboard/biz_... and /experiences/exp_...
+    // (Whop creates an experience on install; the sidebar entry uses it).
+    // Single-account template: the served account always comes from env.
+    const companyId = getAccountId()
 
     // Dashboard apps are for account team members only.
     const access = await whopApi<{ has_access?: boolean; access_level?: string }>(

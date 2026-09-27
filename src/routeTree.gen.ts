@@ -18,6 +18,7 @@ import { Route as CheckoutExpressRouteImport } from './routes/checkout/express'
 import { Route as CheckoutInspectionRouteImport } from './routes/checkout/inspection'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout/success'
 import { Route as DashboardCompanyIdRouteImport } from './routes/dashboard/$companyId'
+import { Route as ExperiencesExperienceIdRouteImport } from './routes/experiences/$experienceId'
 import { Route as ApiAdminFinalInvoiceRouteImport } from './routes/api/admin/final-invoice'
 import { Route as ApiAdminLeadsRouteImport } from './routes/api/admin/leads'
 import { Route as ApiAdminMembershipsRouteImport } from './routes/api/admin/memberships'
@@ -69,6 +70,11 @@ const DashboardCompanyIdRoute = DashboardCompanyIdRouteImport.update({
   path: '/dashboard/$companyId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExperiencesExperienceIdRoute = ExperiencesExperienceIdRouteImport.update({
+  id: '/experiences/$experienceId',
+  path: '/experiences/$experienceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminFinalInvoiceRoute = ApiAdminFinalInvoiceRouteImport.update({
   id: '/api/admin/final-invoice',
   path: '/api/admin/final-invoice',
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/checkout/inspection': typeof CheckoutInspectionRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/dashboard/$companyId': typeof DashboardCompanyIdRoute
+  '/experiences/$experienceId': typeof ExperiencesExperienceIdRoute
   '/api/admin/final-invoice': typeof ApiAdminFinalInvoiceRoute
   '/api/admin/leads': typeof ApiAdminLeadsRoute
   '/api/admin/memberships': typeof ApiAdminMembershipsRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/checkout/inspection': typeof CheckoutInspectionRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/dashboard/$companyId': typeof DashboardCompanyIdRoute
+  '/experiences/$experienceId': typeof ExperiencesExperienceIdRoute
   '/api/admin/final-invoice': typeof ApiAdminFinalInvoiceRoute
   '/api/admin/leads': typeof ApiAdminLeadsRoute
   '/api/admin/memberships': typeof ApiAdminMembershipsRoute
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/checkout/inspection': typeof CheckoutInspectionRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/dashboard/$companyId': typeof DashboardCompanyIdRoute
+  '/experiences/$experienceId': typeof ExperiencesExperienceIdRoute
   '/api/admin/final-invoice': typeof ApiAdminFinalInvoiceRoute
   '/api/admin/leads': typeof ApiAdminLeadsRoute
   '/api/admin/memberships': typeof ApiAdminMembershipsRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/checkout/inspection'
     | '/checkout/success'
     | '/dashboard/$companyId'
+    | '/experiences/$experienceId'
     | '/api/admin/final-invoice'
     | '/api/admin/leads'
     | '/api/admin/memberships'
@@ -172,6 +182,7 @@ export interface FileRouteTypes {
     | '/checkout/inspection'
     | '/checkout/success'
     | '/dashboard/$companyId'
+    | '/experiences/$experienceId'
     | '/api/admin/final-invoice'
     | '/api/admin/leads'
     | '/api/admin/memberships'
@@ -188,6 +199,7 @@ export interface FileRouteTypes {
     | '/checkout/inspection'
     | '/checkout/success'
     | '/dashboard/$companyId'
+    | '/experiences/$experienceId'
     | '/api/admin/final-invoice'
     | '/api/admin/leads'
     | '/api/admin/memberships'
@@ -205,6 +217,7 @@ export interface RootRouteChildren {
   CheckoutInspectionRoute: typeof CheckoutInspectionRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
   DashboardCompanyIdRoute: typeof DashboardCompanyIdRoute
+  ExperiencesExperienceIdRoute: typeof ExperiencesExperienceIdRoute
   ApiAdminFinalInvoiceRoute: typeof ApiAdminFinalInvoiceRoute
   ApiAdminLeadsRoute: typeof ApiAdminLeadsRoute
   ApiAdminMembershipsRoute: typeof ApiAdminMembershipsRoute
@@ -277,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCompanyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/experiences/$experienceId': {
+      id: '/experiences/$experienceId'
+      path: '/experiences/$experienceId'
+      fullPath: '/experiences/$experienceId'
+      preLoaderRoute: typeof ExperiencesExperienceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/final-invoice': {
       id: '/api/admin/final-invoice'
       path: '/api/admin/final-invoice'
@@ -325,6 +345,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutInspectionRoute: CheckoutInspectionRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
   DashboardCompanyIdRoute: DashboardCompanyIdRoute,
+  ExperiencesExperienceIdRoute: ExperiencesExperienceIdRoute,
   ApiAdminFinalInvoiceRoute: ApiAdminFinalInvoiceRoute,
   ApiAdminLeadsRoute: ApiAdminLeadsRoute,
   ApiAdminMembershipsRoute: ApiAdminMembershipsRoute,
