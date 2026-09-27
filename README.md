@@ -155,6 +155,20 @@ account/plan in the dashboard (payment methods), or leave it off for a productio
 4. The form shows the green success state ONLY after Whop returned a real `lead_…` id —
    it never fakes success.
 
+## 6.2 Leads page inside the Whop dashboard
+
+The app registers a **dashboard view** at `/dashboard/[companyId]`, so the business
+owner sees a "Summit Shield Roofing" entry with a live leads page directly in their
+Whop dashboard sidebar (Dashboard → Apps). Authentication is fully automatic: Whop's
+app proxy injects a short-lived ES256 user JWT (`x-whop-user-token`) into requests
+made inside the iframe; `src/lib/server/dashboard-auth.ts` verifies it with
+`@whop-apps/auth` (Whop's public key ships with the package) and then confirms via
+the Whop API that the user is an **admin team member** of the `biz_` account in the
+URL path. Non-admins, expired tokens, or direct hits from outside the iframe get
+401 — no shared secret involved on this surface. Leads are served by
+`GET /api/dashboard/leads`, which reuses the same lead-fetching core as the
+secret-gated admin page (`src/lib/server/leads.ts`).
+
 ## 6.1 Team leads page (no dashboard needed)
 
 `/admin/leads` on the live site is a password-protected internal page listing the

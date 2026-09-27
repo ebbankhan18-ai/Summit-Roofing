@@ -19,6 +19,7 @@
     "@tanstack/react-router": "latest",
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-start": "latest",
+    "@whop-apps/auth": "^0.0.1-canary.117",
     "@whop/elements": "^1.1.0",
     "@whop/elements-react": "^1.1.0",
     "react": "^19.2.0",
