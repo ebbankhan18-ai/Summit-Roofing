@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface InvoiceResult {
   ok: boolean
@@ -7,6 +7,16 @@ interface InvoiceResult {
   payOnlineUrl?: string | null
   mode?: string
   error?: string
+}
+
+interface MemberOption {
+  memberId: string
+  membershipId: string
+  name: string | null
+  email: string | null
+  status: string | null
+  pricePaid: string | null
+  joinedAt: string | null
 }
 
 /**
@@ -26,6 +36,43 @@ export function FinalInvoicePanel({ adminSecret }: { adminSecret: string }) {
   const [dueDate, setDueDate] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<InvoiceResult | null>(null)
+  const [members, setMembers] = useState<MemberOption[]>([])
+  const [membersLoading, setMembersLoading] = useState(false)
+  const [membersError, setMembersError] = useState<string | null>(null)
+  const [selectedMembership, setSelectedMembership] = useState('')
+
+  const loadMembers = useCallback(async () => {
+    setMembersLoading(true)
+    setMembersError(null)
+    try {
+      const res = await fetch('/api/admin/memberships?first=50', {
+        headers: { 'x-admin-secret': adminSecret },
+      })
+      const data = (await res.json()) as { ok?: boolean; members?: MemberOption[]; error?: string }
+      if (!res.ok || !data.ok || !data.members) {
+        setMembersError(data.error ?? `Could not load customers (${res.status}).`)
+        return
+      }
+      setMembers(data.members)
+    } catch {
+      setMembersError('Network error loading customers.')
+    } finally {
+      setMembersLoading(false)
+    }
+  }, [adminSecret])
+
+  useEffect(() => {
+    void loadMembers()
+  }, [loadMembers])
+
+  function applyMember(membershipId: string) {
+    setSelectedMembership(membershipId)
+    const m = members.find((x) => x.membershipId === membershipId)
+    if (!m) return
+    setMemberId(m.memberId)
+    if (m.email) setEmailAddress(m.email)
+    if (m.name) setCustomerName(m.name)
+  }
 
   const valid =
     memberId.trim().startsWith('mber_') &&
@@ -78,6 +125,52 @@ export function FinalInvoicePanel({ adminSecret }: { adminSecret: string }) {
         Bill the remaining balance through the Whop Invoices API after the deposit is paid. Auto-charge uses the card the
         customer saved at deposit; manual mode emails them a secure pay-online link.
       </p>
+
+      <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <label htmlFor="fi-member-pick" className="text-sm font-semibold text-stone-800">
+            Pick a customer <span className="font-normal text-stone-500">— auto-fills the form below</span>
+          </label>
+          <button
+            type="button"
+            onClick={() => void loadMembers()}
+            disabled={membersLoading}
+            className="rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-stone-100 focus-visible:outline-2 focus-visible:outline-amber-600 disabled:opacity-60"
+          >
+            {membersLoading ? 'Loading…' : 'Refresh list'}
+          </button>
+        </div>
+        {membersError && (
+          <p role="alert" className="mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800">
+            {membersError}
+          </p>
+        )}
+        <select
+          id="fi-member-pick"
+          className="mt-2 w-full rounded-lg border border-stone-300 bg-white px-3.5 py-2.5 text-sm shadow-sm focus:border-amber-600 focus:outline-2 focus:outline-amber-600/40"
+          value={selectedMembership}
+          onChange={(e) => applyMember(e.target.value)}
+        >
+          <option value="">
+            {membersLoading
+              ? 'Loading customers…'
+              : members.length === 0
+                ? 'No memberships found on this product yet'
+                : `${members.length} customer${members.length === 1 ? '' : 's'} — select one…`}
+          </option>
+          {members.map((m) => (
+            <option key={m.membershipId} value={m.membershipId}>
+              {m.name ?? m.email ?? m.memberId}
+              {m.email && m.name ? ` — ${m.email}` : ''}
+              {m.status ? ` (${m.status})` : ''}
+            </option>
+          ))}
+        </select>
+        <p className="mt-1 text-xs text-stone-500">
+          Newest first, from the Whop Memberships API on this product. Picking one fills the member ID, email, and
+          name; still set the balance yourself.
+        </p>
+      </div>
 
       <form onSubmit={submit} className="mt-5 grid gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">

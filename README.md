@@ -163,7 +163,10 @@ service, timeline, message, consent, conversion status), with filtering and a
 call/email quick-contact. A **Billing tools** section on the same page opens a
 final-balance invoice creator (`FinalInvoicePanel`) so team members can bill the
 remaining balance through the Whop Invoices API — auto-charge the card saved at
-deposit, or email a manual-pay link — without touching curl. The password is the same `INVOICE_ADMIN_SECRET` app
+deposit, or email a manual-pay link — without touching curl. A **member picker**
+in the panel lists recent memberships on the product via the secret-protected
+`GET /api/admin/memberships` (Whop Memberships API, newest first) and auto-fills
+the member ID, email, and name on selection; the balance is entered manually. The password is the same `INVOICE_ADMIN_SECRET` app
 secret; the server rejects anything else with a 404 and never serves lead data
 unauthenticated. The page is `noindex, nofollow`. To rotate the password, update
 the `INVOICE_ADMIN_SECRET` app secret and restart/redeploy.
@@ -201,7 +204,8 @@ checkout/purchase events appear automatically from Whop's own pixel once payment
    admin-secret protected `POST /api/admin/final-invoice` (Whop Invoices API,
    both documented modes):
    - **UI:** sign in at `/admin/leads` → *Billing tools* → *Create final-balance
-     invoice* → fill member ID, email, amount, and collection method.
+     invoice* → pick the customer (auto-fills member ID, email, name), enter the
+     amount, and choose the collection method.
    - **API:** direct POST as below.
    - `collection_method: "charge_automatically"` → charges the stored payment method
    - `collection_method: "send_invoice"` → emails a manual-pay invoice link

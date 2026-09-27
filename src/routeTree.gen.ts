@@ -19,6 +19,7 @@ import { Route as CheckoutInspectionRouteImport } from './routes/checkout/inspec
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout/success'
 import { Route as ApiAdminFinalInvoiceRouteImport } from './routes/api/admin/final-invoice'
 import { Route as ApiAdminLeadsRouteImport } from './routes/api/admin/leads'
+import { Route as ApiAdminMembershipsRouteImport } from './routes/api/admin/memberships'
 import { Route as ApiPaymentsConfirmRouteImport } from './routes/api/payments/confirm'
 
 const IndexRoute = IndexRouteImport.update({
@@ -71,6 +72,11 @@ const ApiAdminLeadsRoute = ApiAdminLeadsRouteImport.update({
   path: '/api/admin/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminMembershipsRoute = ApiAdminMembershipsRouteImport.update({
+  id: '/api/admin/memberships',
+  path: '/api/admin/memberships',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPaymentsConfirmRoute = ApiPaymentsConfirmRouteImport.update({
   id: '/api/payments/confirm',
   path: '/api/payments/confirm',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/checkout/success': typeof CheckoutSuccessRoute
   '/api/admin/final-invoice': typeof ApiAdminFinalInvoiceRoute
   '/api/admin/leads': typeof ApiAdminLeadsRoute
+  '/api/admin/memberships': typeof ApiAdminMembershipsRoute
   '/api/payments/confirm': typeof ApiPaymentsConfirmRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/checkout/success': typeof CheckoutSuccessRoute
   '/api/admin/final-invoice': typeof ApiAdminFinalInvoiceRoute
   '/api/admin/leads': typeof ApiAdminLeadsRoute
+  '/api/admin/memberships': typeof ApiAdminMembershipsRoute
   '/api/payments/confirm': typeof ApiPaymentsConfirmRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/checkout/success': typeof CheckoutSuccessRoute
   '/api/admin/final-invoice': typeof ApiAdminFinalInvoiceRoute
   '/api/admin/leads': typeof ApiAdminLeadsRoute
+  '/api/admin/memberships': typeof ApiAdminMembershipsRoute
   '/api/payments/confirm': typeof ApiPaymentsConfirmRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/checkout/success'
     | '/api/admin/final-invoice'
     | '/api/admin/leads'
+    | '/api/admin/memberships'
     | '/api/payments/confirm'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/checkout/success'
     | '/api/admin/final-invoice'
     | '/api/admin/leads'
+    | '/api/admin/memberships'
     | '/api/payments/confirm'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/checkout/success'
     | '/api/admin/final-invoice'
     | '/api/admin/leads'
+    | '/api/admin/memberships'
     | '/api/payments/confirm'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
   ApiAdminFinalInvoiceRoute: typeof ApiAdminFinalInvoiceRoute
   ApiAdminLeadsRoute: typeof ApiAdminLeadsRoute
+  ApiAdminMembershipsRoute: typeof ApiAdminMembershipsRoute
   ApiPaymentsConfirmRoute: typeof ApiPaymentsConfirmRoute
 }
 
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/memberships': {
+      id: '/api/admin/memberships'
+      path: '/api/admin/memberships'
+      fullPath: '/api/admin/memberships'
+      preLoaderRoute: typeof ApiAdminMembershipsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/payments/confirm': {
       id: '/api/payments/confirm'
       path: '/api/payments/confirm'
@@ -266,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutSuccessRoute: CheckoutSuccessRoute,
   ApiAdminFinalInvoiceRoute: ApiAdminFinalInvoiceRoute,
   ApiAdminLeadsRoute: ApiAdminLeadsRoute,
+  ApiAdminMembershipsRoute: ApiAdminMembershipsRoute,
   ApiPaymentsConfirmRoute: ApiPaymentsConfirmRoute,
 }
 export const routeTree = rootRouteImport
