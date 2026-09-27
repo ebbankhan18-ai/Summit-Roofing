@@ -160,7 +160,10 @@ account/plan in the dashboard (payment methods), or leave it off for a productio
 `/admin/leads` on the live site is a password-protected internal page listing the
 newest estimate leads straight from the Whop Leads API (name, email, phone, ZIP,
 service, timeline, message, consent, conversion status), with filtering and a
-call/email quick-contact. The password is the same `INVOICE_ADMIN_SECRET` app
+call/email quick-contact. A **Billing tools** section on the same page opens a
+final-balance invoice creator (`FinalInvoicePanel`) so team members can bill the
+remaining balance through the Whop Invoices API — auto-charge the card saved at
+deposit, or email a manual-pay link — without touching curl. The password is the same `INVOICE_ADMIN_SECRET` app
 secret; the server rejects anything else with a 404 and never serves lead data
 unauthenticated. The page is `noindex, nofollow`. To rotate the password, update
 the `INVOICE_ADMIN_SECRET` app secret and restart/redeploy.
@@ -194,8 +197,12 @@ checkout/purchase events appear automatically from Whop's own pixel once payment
    `setupFutureUsage: "off_session"`: Whop charges the $500 deposit AND stores the
    payment method for later off-session use in one compliant flow (no card data ever
    touches this site; no custom card form).
-4. **Final balance after the job** — `POST /api/admin/final-invoice` (server-only,
-   admin-secret protected) calls the Whop Invoices API with both documented modes:
+4. **Final balance after the job** — two ways to invoke the same server-only,
+   admin-secret protected `POST /api/admin/final-invoice` (Whop Invoices API,
+   both documented modes):
+   - **UI:** sign in at `/admin/leads` → *Billing tools* → *Create final-balance
+     invoice* → fill member ID, email, amount, and collection method.
+   - **API:** direct POST as below.
    - `collection_method: "charge_automatically"` → charges the stored payment method
    - `collection_method: "send_invoice"` → emails a manual-pay invoice link
 

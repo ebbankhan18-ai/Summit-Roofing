@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { business } from '#/config/business'
+import { FinalInvoicePanel } from '#/components/FinalInvoicePanel'
 
 type Status = 'gate' | 'loading' | 'ready' | 'error'
 
@@ -38,6 +39,7 @@ export function AdminLeadsPanel() {
   const [hasMore, setHasMore] = useState(false)
   const [query, setQuery] = useState('')
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [showInvoicing, setShowInvoicing] = useState(false)
 
   const load = useCallback(async (candidate: string) => {
     setStatus('loading')
@@ -277,6 +279,21 @@ export function AdminLeadsPanel() {
           })}
         </ul>
       )}
+
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-stone-900">Billing tools</h2>
+          <button
+            type="button"
+            onClick={() => setShowInvoicing((v) => !v)}
+            aria-expanded={showInvoicing}
+            className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm font-semibold text-stone-800 hover:bg-stone-100 focus-visible:outline-2 focus-visible:outline-amber-600"
+          >
+            {showInvoicing ? 'Hide invoice creator' : 'Create final-balance invoice'}
+          </button>
+        </div>
+        {showInvoicing && <FinalInvoicePanel adminSecret={secret} />}
+      </div>
 
       <p className="text-center text-xs text-stone-500">
         Served from the Whop Leads API on every load. {business.name} internal tooling — do not share this URL.
